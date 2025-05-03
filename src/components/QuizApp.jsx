@@ -2,10 +2,10 @@
 // プレイヤーはマップ上を移動し、モンスターとエンカウントし、宅建クイズでバトル！
 
 import React, { useState, useEffect } from 'react';
-import monster from '../assets/monster.png'; // モンスター画像（自前で用意して src/assets/ に入れてね）
+import monster from '../assets/monster.png';
 
-const MAP_SIZE = 5; // 5x5のミニマップ
-const ENCOUNTER_RATE = 0.3; // エンカウント率30％
+const MAP_SIZE = 5;
+const ENCOUNTER_RATE = 0.3;
 
 const quizData = [
   {
@@ -39,9 +39,7 @@ export default function TakkenRPG() {
     if (dir === 'right' && x < MAP_SIZE - 1) x++;
     setPosition({ x, y });
     setMessage(`移動：(${x},${y})`);
-    // エンカウント処理もここで呼び出す
   };
-  
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -85,7 +83,7 @@ export default function TakkenRPG() {
       setLog((prev) => [...prev, '❌ 不正解…ダメージを受けた！']);
     }
     setEncounter(false);
-    setMessage("→ 矢印キーで探索を続けよ");
+    setMessage("→ 探索を続けよう");
   };
 
   return (
@@ -106,12 +104,24 @@ export default function TakkenRPG() {
           return (
             <div
               key={`${x}-${y}`}
-              className={`w-8 h-8 flex items-center justify-center border text-xs rounded ${isPlayer ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}
+              className={`w-8 h-8 flex items-center justify-center border text-xs rounded ${
+                isPlayer ? 'bg-blue-600 text-white' : 'bg-gray-200'
+              }`}
             >
               {isPlayer ? '◉' : ''}
             </div>
           );
         })}
+      </div>
+
+      {/* ✅ バーチャルDパッド */}
+      <div className="flex flex-col items-center mt-4 space-y-2 sm:hidden">
+        <button onClick={() => handleMove('up')} className="p-2 bg-blue-200 rounded shadow">⬆️</button>
+        <div className="flex space-x-2">
+          <button onClick={() => handleMove('left')} className="p-2 bg-blue-200 rounded shadow">⬅️</button>
+          <button onClick={() => handleMove('down')} className="p-2 bg-blue-200 rounded shadow">⬇️</button>
+          <button onClick={() => handleMove('right')} className="p-2 bg-blue-200 rounded shadow">➡️</button>
+        </div>
       </div>
 
       {/* メッセージ */}
@@ -128,8 +138,13 @@ export default function TakkenRPG() {
             <button
               key={i}
               onClick={() => handleAnswer(i)}
-              className={`block w-full text-left p-2 rounded mb-2 border ${selected === null ? 'bg-gray-100 hover:bg-blue-200' :
-                i === currentQuiz.answer ? 'bg-green-200' : 'bg-red-200'}`}
+              className={`block w-full text-left p-2 rounded mb-2 border ${
+                selected === null
+                  ? 'bg-gray-100 hover:bg-blue-200'
+                  : i === currentQuiz.answer
+                  ? 'bg-green-200'
+                  : 'bg-red-200'
+              }`}
               disabled={selected !== null}
             >
               {choice}
