@@ -31,15 +31,28 @@ export default function TakkenRPG() {
   const [exp, setExp] = useState(0);
   const [level, setLevel] = useState(1);
 
+  const moveAndCheckEncounter = (newX, newY) => {
+    setPosition({ x: newX, y: newY });
+    setMessage(`移動：(${newX},${newY})`);
+    if (Math.random() < ENCOUNTER_RATE) {
+      const quiz = quizData[Math.floor(Math.random() * quizData.length)];
+      setTimeout(() => {
+        setCurrentQuiz(quiz);
+        setEncounter(true);
+        setSelected(null);
+      }, 50);
+    }
+  };  
+
   const handleMove = (dir) => {
     let { x, y } = position;
     if (dir === 'up' && y > 0) y--;
     if (dir === 'down' && y < MAP_SIZE - 1) y++;
     if (dir === 'left' && x > 0) x--;
     if (dir === 'right' && x < MAP_SIZE - 1) x++;
-    setPosition({ x, y });
-    setMessage(`移動：(${x},${y})`);
+    moveAndCheckEncounter(x, y);
   };
+  
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -49,22 +62,13 @@ export default function TakkenRPG() {
       if (e.key === 'ArrowDown' && y < MAP_SIZE - 1) y++;
       if (e.key === 'ArrowLeft' && x > 0) x--;
       if (e.key === 'ArrowRight' && x < MAP_SIZE - 1) x++;
-      const moved = { x, y };
-      setPosition(moved);
-      setMessage(`移動：(${x},${y})`);
-      if (Math.random() < ENCOUNTER_RATE) {
-        const quiz = quizData[Math.floor(Math.random() * quizData.length)];
-        setTimeout(() => {
-          setCurrentQuiz(quiz);
-          setEncounter(true);
-          setSelected(null);
-        }, 50);
-      }
+      moveAndCheckEncounter(x, y);
     };
+  
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [position, encounter]);
-
+  
   const handleAnswer = (index) => {
     const correct = index === currentQuiz.answer;
     if (correct) {
